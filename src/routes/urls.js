@@ -4,11 +4,11 @@ const router = express.Router();
 const passport = require("../config/passport");
 
 //imporing controllers
-const {shortenurl} = require("../controllers/urls/urls")
+const {create_ano_urls} = require("../controllers/urls/urls")
 
 //anonymous user routes
 
-
+router.post('/anonymous/shortner',create_ano_urls);
 
 //protected routes
 // router.post(

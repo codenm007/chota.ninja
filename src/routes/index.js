@@ -13,6 +13,7 @@ const {shortenurl} = require("../controllers/urls/urls");
 //this is the main redirect router 
 router.get("/:code", shortenurl);
 
+router.use('/urls',url_router)
 
 
 module.exports = router;
