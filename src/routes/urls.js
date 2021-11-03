@@ -8,7 +8,6 @@ const {shortenurl} = require("../controllers/urls/urls")
 
 //anonymous user routes
 
-router.get("/short_url", shortenurl);
 
 
 //protected routes
