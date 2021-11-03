@@ -6,7 +6,13 @@ const router = express.Router();
 //importing routes
 const url_router = require("./urls")
 
-router.get("/", url_router);
+//importing controllers
+
+const {shortenurl} = require("../controllers/urls/urls");
+
+//this is the main redirect router 
+router.get("/:code", shortenurl);
+
 
 
 module.exports = router;

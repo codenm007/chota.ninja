@@ -30,7 +30,7 @@ app.use(parser.json());
   //importing routes
    const index_routes = require("./routes/index");
 
-   app.use('/',index_routes);
+   app.use(index_routes);
   
   
   //invalid route settings
