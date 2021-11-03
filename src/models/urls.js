@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const db_schema = require("../database/index");
+const db_schema = require("../database/db");
 
 const schema = new db_schema(
     {
@@ -13,6 +13,9 @@ const schema = new db_schema(
           required:true,
           trim:true
         },
+        user_id: {
+            type: String,
+          },
         redirects_to: {
             type: String,
             required:true,
