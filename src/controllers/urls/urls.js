@@ -1,8 +1,10 @@
 //importing packages 
 const validator = require("validator");
 const cryptoRandomString = require("crypto-random-string");
+const useragent = require('useragent');
 //importing models
 let urls = require("../../models/urls");
+let url_analytics = require("../../models/url_analytics");
 const utils = require("./utils");
 
 /******************************************** */
@@ -15,9 +17,43 @@ exports.shortenurl = async (req, res) => {
     code = utils.hashstr(code);
     urls.findOne({ 
         url_hash: code,
-        is_blocked:false
+        is_blocked:false,
+        will_open_at:{
+            $lte: new Date(), //checking link expiring time 
+        },
+        will_expire_at:{
+            $gte:new Date()
+        }
     }).then(urldata => {
-        return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
+        
+        const agent = useragent.parse(req.headers['user-agent']);
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
+        // console.log(agent.toAgent(),"os",agent.os.toString());
+
+         const newurl_analytics = new url_analytics({
+            link_id:urldata._id,
+            user_ip:ip,
+            user_browser:agent.toAgent(),
+            user_os:agent.os.toString()
+         })
+         newurl_analytics
+         .save()
+         .then(data =>{
+           //  console.log(data,88);
+         })
+         .catch(err =>{
+             console.log(err);
+         })
+        //updating total clicks
+        let query = {_id:urldata._id}
+        urls.findOneAndUpdate(query, { $set: { total_clicks: urldata.total_clicks + 1 }}) //incrementing total clicks
+        .then(() =>{
+
+
+            return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
+        }).catch(err =>{
+            console.log(err);
+        })
     }).catch(err =>{
         return res.status(404).json({
             success: false,
