@@ -108,12 +108,45 @@ exports.create_ano_urls = async (req, res) => {
         }
         return res.status(200).json({
             success: true,
-            message: "Please pass valid redirect url !",
+            message: "Link shortened successfully",
             data: response
         })
     }).catch(err => {
         console.log(err);
     })
 
+
+}
+
+/******************************************** */
+//This functions is mainly for giving the total clicks to ano user
+/******************************************** */
+exports.anototalclicks = async (req, res) => {
+    let { id } = req.body;
+    if (!id) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the link id !",
+            data: null
+        })
+    }
+    //calling hash function to match db hash
+    urls.findOne({ 
+        _id: id
+    }).then(urldata => {
+        return res.status(200).json({
+            success: true,
+            message: "Successfully fetched total clicks",
+            data: {
+                total_clicks:urldata.total_clicks
+            }
+        })
+    }).catch(err =>{
+        return res.status(404).json({
+            success: false,
+            message: "Invalid url",
+            data: null
+        })
+    })
 
 }
