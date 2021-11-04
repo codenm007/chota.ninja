@@ -205,7 +205,6 @@ exports.url_namechange = async (req, res) => {
             const fullUrl = req.protocol + '://' + req.get('host');
             urls.findOneAndUpdate(query, { $set: { url_hash: utils.hashstr(newurlcode),url_encrypt:utils.encrypt(newurlcode) }}) //incrementing total clicks
             .then((data) =>{
-                console.log(data,23)
                 return res.status(200).json({
                     success: true,
                     message: "Successfully updated url name",
