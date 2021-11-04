@@ -4,15 +4,17 @@ const router = express.Router();
 const passport = require("../config/passport");
 
 //imporing controllers
-const {create_ano_urls,anototalclicks,shortenurl} = require("../controllers/urls/urls")
+const urls_controller = require("../controllers/urls/urls")
 
 //anonymous user routes
 
-router.post('/anonymous/shortner',create_ano_urls);
+router.post('/anonymous/shortner',urls_controller.create_ano_urls);
 
-router.post('/anonymous/totalClicks',anototalclicks);
+router.post('/anonymous/totalClicks',urls_controller.anototalclicks);
 
-router.post('/getredirecturl',shortenurl);
+router.post('/anonymous/customizeurl',urls_controller.url_namechange);
+
+router.post('/getredirecturl',urls_controller.shortenurl);
 //protected routes
 // router.post(
 //     "/get_user_booking_data",

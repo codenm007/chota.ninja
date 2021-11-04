@@ -16,6 +16,9 @@ const schema = new db_schema(
         user_id: {
             type: String,
           },
+        password_digest: {
+            type: String,
+          },
         redirects_to: {
             type: String,
             required:true,

@@ -163,3 +163,70 @@ exports.anototalclicks = async (req, res) => {
 /******************************************** */
 //Custom url namechange for anonymous user
 /******************************************** */
+
+exports.url_namechange = async (req, res) => {
+    let { id,code } = req.body;
+    if (!id) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the link id !",
+            data: null
+        })
+    }
+    if (!code) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the link unique code !",
+            data: null
+        })
+    }
+
+    let newurlcode = encodeURIComponent(code) ;
+    
+    urls.findOne({ 
+        url_hash:utils.hashstr(newurlcode),
+        will_open_at:{
+                $lte: new Date(), //checking link expiring time 
+        },
+        will_expire_at:{
+                $gte:new Date()
+        }
+    }).then((data) => {
+        
+        if(data){
+            return res.status(400).json({
+                success: false,
+                message: "Name not available !",
+                data: null
+            })
+        }else{
+            let query = {_id:id}
+            
+            const fullUrl = req.protocol + '://' + req.get('host');
+            urls.findOneAndUpdate(query, { $set: { url_hash: utils.hashstr(newurlcode),url_encrypt:utils.encrypt(newurlcode) }}) //incrementing total clicks
+            .then((data) =>{
+                console.log(data,23)
+                return res.status(200).json({
+                    success: true,
+                    message: "Successfully updated url name",
+                    data: {
+                        shortenedLink: `${fullUrl}/${newurlcode}`,
+                    }
+                })
+            }).catch(err =>{
+                return res.status(404).json({
+                    success: false,
+                    message: "Invalid id",
+                    data: null
+                })
+            })
+        }
+    }).catch(err =>{
+        return res.status(404).json({
+            success: false,
+            message: "Url with same name already available",
+            data: err
+        })
+    })
+
+}
