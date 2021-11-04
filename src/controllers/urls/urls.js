@@ -27,7 +27,7 @@ exports.shortenurl = async (req, res) => {
     }).then(urldata => {
         
         const agent = useragent.parse(req.headers['user-agent']);
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
+        const ip = utils.encrypt(req.headers['x-forwarded-for'] || req.socket.remoteAddress);
         // console.log(agent.toAgent(),"os",agent.os.toString());
 
          const newurl_analytics = new url_analytics({
@@ -39,7 +39,7 @@ exports.shortenurl = async (req, res) => {
          newurl_analytics
          .save()
          .then(data =>{
-           //  console.log(data,88);
+            //  console.log(data,88);
          })
          .catch(err =>{
              console.log(err);
