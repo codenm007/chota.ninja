@@ -12,7 +12,16 @@ const utils = require("./utils");
 /******************************************** */
 
 exports.shortenurl = async (req, res) => {
-    let { code } = req.params
+    let { code } = req.body;
+
+    if (!code) {
+        res.status(400).json({
+            success: false,
+            message: "Please pass the urlcode !",
+            data: null
+        })
+    }
+
     //calling hash function to match db hash
     code = utils.hashstr(code);
     urls.findOne({ 
@@ -130,7 +139,7 @@ exports.anototalclicks = async (req, res) => {
             data: null
         })
     }
-    //calling hash function to match db hash
+    
     urls.findOne({ 
         _id: id
     }).then(urldata => {
@@ -150,3 +159,7 @@ exports.anototalclicks = async (req, res) => {
     })
 
 }
+
+/******************************************** */
+//Custom url namechange for anonymous user
+/******************************************** */
