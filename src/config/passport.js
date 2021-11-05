@@ -29,18 +29,26 @@ passport.use(new GoogleStrategy({
           is_email_verified:userProfiledata.email_verified,
           locale:userProfiledata.locale,
           last_login:new Date()
-        }},{upsert: true}).then(data =>{
+        }},{upsert: true , new:true}).then(data =>{
 
           //check if user is blacklisted/blocked
+         
+          let response = {
+            user_id:data._id,
+            firstName:data.firstName,
+            lastName:data.lastName,
+            profilePic:data.profilePic
+          }
           if(data){
             if(data.is_user_blacklisted){
               const error = "User blocked,plese contact admin";
               return done(error,null);
             }else{
-              return done(null, profile);
+              
+              return done(null, response);
             }
           }else{
-            return done(null, profile);
+            return done(null, response);
           }
           
         }).catch(err =>{
@@ -48,6 +56,8 @@ passport.use(new GoogleStrategy({
         })
   }
 ));
+
+//users.findByIdAndDelete("61854c89709518ae10607427").then(data => console.log(data,1233))
 
 passport.serializeUser(function(user, done) {
     /*

@@ -11,6 +11,7 @@ const schema = new db_schema(
         },
         email: {
             type: String,
+            unique: true 
           },
         profilePic: {
             type: String,
