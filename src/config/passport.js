@@ -2,6 +2,9 @@ require("dotenv").config();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
+//importing models 
+const users = require("../models/user");
+
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -10,13 +13,39 @@ passport.use(new GoogleStrategy({
     passReqToCallback:true
   },
   function(request,accessToken, refreshToken, profile, done) {
-    /*
-     use the profile info (mainly profile id) to check if the user is registerd in ur db
-     If yes select the user and pass him to the done callback
-     If not create the user and then select him and pass to callback
-    */
-   //console.log(profile,999)
-    return done(null, profile);
+
+    //syncing the profile with the db 
+
+     let userProfiledata = profile._json;
+     
+     let query = {email:userProfiledata.email}
+       users.findOneAndUpdate(query, { $set: { 
+          firstName: userProfiledata.given_name,
+          lastName:userProfiledata.family_name,
+          email:userProfiledata.email,
+          profilePic:userProfiledata.picture,
+          loginmethod:"google oauth",
+          vendor_sub_id:userProfiledata.sub,
+          is_email_verified:userProfiledata.email_verified,
+          locale:userProfiledata.locale,
+          last_login:new Date()
+        }},{upsert: true}).then(data =>{
+
+          //check if user is blacklisted/blocked
+          if(data){
+            if(data.is_user_blacklisted){
+              const error = "User blocked,plese contact admin";
+              return done(error,null);
+            }else{
+              return done(null, profile);
+            }
+          }else{
+            return done(null, profile);
+          }
+          
+        }).catch(err =>{
+          console.log(err);
+        })
   }
 ));
 
