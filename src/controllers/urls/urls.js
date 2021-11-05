@@ -79,6 +79,12 @@ exports.shortenurl = async (req, res) => {
 exports.create_ano_urls = async (req, res) => {
     const { redirects_to, will_open_at, will_expire_at } = req.body;
 
+    const user_id = null;
+
+    if(req.user){
+         user_id = req.user.user_id;
+    }
+
     if (!redirects_to) {
         res.status(400).json({
             success: false,
@@ -102,7 +108,8 @@ exports.create_ano_urls = async (req, res) => {
         url_encrypt: utils.encrypt(randomUrllink),
         redirects_to: utils.encrypt(redirects_to),
         will_open_at: will_open_at,
-        will_expire_at: will_expire_at
+        will_expire_at: will_expire_at,
+        user_id:user_id
     });
 
 
@@ -227,5 +234,42 @@ exports.url_namechange = async (req, res) => {
             data: err
         })
     })
+
+}
+
+/******************************************** */
+//This function is used to sync the current user urls with his account 
+/******************************************** */
+exports.sync_user_urls = async (req, res) => {
+    const { urls } = req.body;
+    const {user_id} = req.user;
+
+    if (!urls) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the redirect url !",
+            data: null
+        })
+    }
+    let count = 0;
+    urls.forEach(url =>{
+        let query = {_id:url._id}
+        urls.findOneAndUpdate(query, { $set: { user_id:user_id  }})
+        .then(()=>{
+            count++;
+            if(urls.length == count){
+                return res.status(400).json({
+                    success: true,
+                    message: "Urls syned successfully !",
+                    data: null
+                })
+            }
+        })
+        .catch(err =>{
+            console.log(err);
+        })
+    })
+
+
 
 }
