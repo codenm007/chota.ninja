@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = new express();
 const parser = require("body-parser");
@@ -5,6 +6,8 @@ const cors = require('cors');
 const helmet = require("helmet");
 const compress = require('compression');
 const noCache = require('nocache');
+const session = require('express-session');
+const passport = require('passport');
 
 app.use(helmet());
 app.use(compress()); // Compress all routes
@@ -12,6 +15,14 @@ app.use(helmet.xssFilter());
 app.use(noCache());
 app.use(helmet.noSniff());
 app.use(helmet.hidePoweredBy());
+app.use(session({
+  resave: false,
+  saveUninitialized: true,
+  secret: process.env.EXPRESS_SESSION_SECRET
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 //cors allowed to all
