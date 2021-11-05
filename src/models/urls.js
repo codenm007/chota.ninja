@@ -41,6 +41,10 @@ const schema = new db_schema(
             type:Boolean,
             default:false
         },
+        is_synced:{
+          type:Boolean,
+          default:false
+      },
         is_passworded:{
             type:Boolean,
             default:false

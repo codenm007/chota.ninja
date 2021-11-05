@@ -251,25 +251,24 @@ exports.sync_user_urls = async (req, res) => {
             data: null
         })
     }
-    let count = 0;
-    urls.forEach(url =>{
-        let query = {_id:url._id}
-        urls.findOneAndUpdate(query, { $set: { user_id:user_id  }})
+
+        let query = {_id:url._id,is_synced:false}
+        urls.findOneAndUpdate(query, { $set: { user_id:user_id,is_synced:true  }})
         .then(()=>{
-            count++;
-            if(urls.length == count){
+            
                 return res.status(400).json({
                     success: true,
-                    message: "Urls syned successfully !",
+                    message: "Url syned successfully !",
                     data: null
                 })
-            }
+            
         })
         .catch(err =>{
             console.log(err);
         })
-    })
-
-
-
 }
+
+/******************************************** */
+//This function is used to create the passworded urls
+/******************************************** */
+
