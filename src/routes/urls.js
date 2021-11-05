@@ -20,7 +20,11 @@ router.post('/anonymous/customizeurl',urls_controller.url_namechange);
 router.post('/getredirecturl',urls_controller.shortenurl);
 //protected routes
 
-router.post('syncUserurls',isLoggedIn,urls_controller.sync_user_urls);
+router.post('/syncUserurls',isLoggedIn,urls_controller.sync_user_urls);
+
+router.post('/urlAddPassword',isLoggedIn,urls_controller.passworded_links);
+
+router.post('/DisableurlPassword',isLoggedIn,urls_controller.disable_passworded);
 // router.post(
 //     "/get_user_booking_data",
 //     passport.authenticate("jwt", { session: false }),

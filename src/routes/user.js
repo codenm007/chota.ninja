@@ -5,6 +5,10 @@ const passport = require("passport");
 require('../config/passport');
 //imporing controllers
 
+//importing important utils
+const isLoggedIn = require("../controllers/users/utils").isLoggedIn;
+
+
 //anonymous user routes
 
 router.get('/success', (req, res) => res.send("gghghghgh"));
@@ -34,11 +38,13 @@ router.get('/auth/logout', function(req, res) {
     res.send('Goodbye!');
 });
 
-const isLoggedIn = (req, res, next) => {
-    console.log(req.user,99667);
-    req.user ? next() : res.sendStatus(401);
-  }
 
-router.get('/personal_info',isLoggedIn, (req, res) => res.send(`${req.user}`));
+router.get('/personal_info',isLoggedIn, (req, res) => {
+  
+  res.status(200)
+  .json({
+    data:req.user
+  })
+});
 
 module.exports = router;

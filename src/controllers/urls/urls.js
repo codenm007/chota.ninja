@@ -241,22 +241,22 @@ exports.url_namechange = async (req, res) => {
 //This function is used to sync the current user urls with his account 
 /******************************************** */
 exports.sync_user_urls = async (req, res) => {
-    const { urls } = req.body;
+    const { url_id } = req.body;
     const {user_id} = req.user;
 
-    if (!urls) {
+    if (!url_id) {
         return res.status(400).json({
             success: false,
-            message: "Please pass the redirect url !",
+            message: "Please pass the url id !",
             data: null
         })
     }
 
-        let query = {_id:url._id,is_synced:false}
+        let query = {_id:url_id,is_synced:false}
         urls.findOneAndUpdate(query, { $set: { user_id:user_id,is_synced:true  }})
         .then(()=>{
             
-                return res.status(400).json({
+                return res.status(200).json({
                     success: true,
                     message: "Url syned successfully !",
                     data: null
@@ -272,3 +272,70 @@ exports.sync_user_urls = async (req, res) => {
 //This function is used to create the passworded urls
 /******************************************** */
 
+exports.passworded_links = async (req, res) => {
+    const { url_id,password } = req.body;
+    const {user_id} = req.user;
+
+    if (!url_id) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the url id !",
+            data: null
+        })
+    }
+
+        let query = {_id:url_id,is_synced:true,user_id:user_id}
+        urls.findOneAndUpdate(query, { $set: { password_digest:utils.hashstr(password),is_passworded:true  }})
+        .then(()=>{
+            
+                return res.status(200).json({
+                    success: true,
+                    message: "Password added successfully to link !",
+                    data: null
+                })
+            
+        })
+        .catch(err =>{
+            return res.status(403).json({
+                success: false,
+                message: "Action not allowed",
+                data: null
+            })
+        })
+}
+
+/******************************************** */
+//This function is used to diable the passworded for urls
+/******************************************** */
+
+exports.disable_passworded = async (req, res) => {
+    const { url_id } = req.body;
+    const {user_id} = req.user;
+
+    if (!url_id) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the url id !",
+            data: null
+        })
+    }
+
+        let query = {_id:url_id,is_synced:true,user_id:user_id,is_passworded:true}
+        urls.findOneAndUpdate(query, { $set: { password_digest:null,is_passworded:false  }})
+        .then(()=>{
+            
+                return res.status(200).json({
+                    success: true,
+                    message: "Password disabled successfully!",
+                    data: null
+                })
+            
+        })
+        .catch(err =>{
+            return res.status(403).json({
+                success: false,
+                message: "Action not allowed",
+                data: null
+            })
+        })
+}
