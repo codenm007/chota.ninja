@@ -12,7 +12,7 @@ const utils = require("./utils");
 /******************************************** */
 
 exports.shortenurl = async (req, res) => {
-    let { code } = req.body;
+    let { code,password } = req.body;
 
     if (!code) {
         res.status(400).json({
@@ -58,8 +58,21 @@ exports.shortenurl = async (req, res) => {
         urls.findOneAndUpdate(query, { $set: { total_clicks: urldata.total_clicks + 1 }}) //incrementing total clicks
         .then(() =>{
 
-
-            return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
+            if(urldata.is_passworded){
+                let user_req_pass = utils.hashstr(password);
+                let link_pass = urldata.password_digest;
+                if(user_req_pass == link_pass){ //password matched
+                    return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
+                }else{
+                    return res.status(401).json({
+                        success: false,
+                        message: "Wrong password",
+                        data: null
+                    })
+                }
+            }else{
+                return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
+            }
         }).catch(err =>{
             console.log(err);
         })
@@ -80,9 +93,11 @@ exports.create_ano_urls = async (req, res) => {
     const { redirects_to, will_open_at, will_expire_at } = req.body;
 
     const user_id = null;
+    const is_synced = false;
 
     if(req.user){
          user_id = req.user.user_id;
+         is_synced = true;
     }
 
     if (!redirects_to) {
@@ -109,7 +124,8 @@ exports.create_ano_urls = async (req, res) => {
         redirects_to: utils.encrypt(redirects_to),
         will_open_at: will_open_at,
         will_expire_at: will_expire_at,
-        user_id:user_id
+        user_id:user_id,
+        is_synced:is_synced
     });
 
 
