@@ -355,3 +355,113 @@ exports.disable_passworded = async (req, res) => {
             })
         })
 }
+
+/******************************************** */
+//This function is used to block the  urls
+/******************************************** */
+
+exports.block_url = async (req, res) => {
+    const { url_id } = req.body;
+    const {user_id} = req.user;
+
+    if (!url_id) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the url id !",
+            data: null
+        })
+    }
+
+
+
+        let query = {_id:url_id,is_synced:true,user_id:user_id,is_passworded:true}
+        urls.findOne(query).then((data)=>{
+            let linkblocked = !data.is_blocked;
+            
+                urls.findOneAndUpdate(query, { $set: {is_blocked:linkblocked,updatedAt:new Date() }})
+                .then(()=>{
+                    let message = "Link blocked successfully !"
+                    if(!is_blocked){
+                        message = "Link unblocked successfully !"
+                    }
+                        return res.status(200).json({
+                            success: true,
+                            message: message,
+                            data: null
+                        })
+                    
+                })
+                .catch(err =>{
+                    console.log(err);
+                })
+        }).catch(err =>{
+            return res.status(403).json({
+                success: false,
+                message: "Action not allowed",
+                data: null
+            })
+        })
+
+}
+
+/******************************************** */
+//This function is used to get all the  urls analytics data
+/******************************************** */
+
+exports.url_analytics_data = async (req, res) => {
+    let { id } = req.body;
+    const {user_id} = req.user;
+    if (!id) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the link id !",
+            data: null
+        })
+    }
+    urls.findOne({
+        _id: id,
+        user_id:user_id
+    }).then(link_id =>{
+        url_analytics.find({ 
+            link_id: link_id._id
+        }).then(analytics_data=> {
+            let response = [];
+            if(analytics_data.length == 0){
+                return res.status(200).json({
+                    success: true,
+                    message: "Successfully fetched link analytics",
+                    data: {}
+                })
+            }
+            analytics_data.forEach(data_url =>{
+                response.push({
+                    user_ip:utils.decrypt(data_url.user_ip),
+                    user_browser:data_url.user_browser,
+                    user_os:data_url.user_os,
+                    createdAt:data_url.createdAt
+                })
+                
+            })
+            if(response.length == analytics_data.length){
+                return res.status(200).json({
+                    success: true,
+                    message: "Successfully fetched link analytics",
+                    data: response
+                }) 
+            }
+            
+        }).catch(err =>{
+            return res.status(404).json({
+                success: false,
+                message: "Analytics data not found",
+                data: null
+            })
+        })
+    }).catch(err =>{
+        return res.status(403).json({
+            success: false,
+            message: "Action not allowed",
+            data: null
+        })
+    })
+}
