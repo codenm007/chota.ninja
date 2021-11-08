@@ -62,7 +62,9 @@ exports.shortenurl = async (req, res) => {
                 let user_req_pass = utils.hashstr(password);
                 let link_pass = urldata.password_digest;
                 if(user_req_pass == link_pass){ //password matched
-                    return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
+                    return res.status(200).json({
+                        redirectSite:utils.decrypt(urldata.redirects_to)
+                    });
                 }else{
                     return res.status(401).json({
                         success: false,
@@ -71,7 +73,9 @@ exports.shortenurl = async (req, res) => {
                     })
                 }
             }else{
-                return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
+                return res.status(200).json({
+                    redirectSite:utils.decrypt(urldata.redirects_to)
+                });
             }
         }).catch(err =>{
             console.log(err);
