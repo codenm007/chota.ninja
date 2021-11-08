@@ -6,6 +6,7 @@ const useragent = require('useragent');
 let urls = require("../../models/urls");
 let url_analytics = require("../../models/url_analytics");
 const utils = require("./utils");
+const { parser } = require('html-metadata-parser');
 
 /******************************************** */
 //This is the main url controller  which checks and matches urls
@@ -128,7 +129,7 @@ exports.create_ano_urls = async (req, res) => {
         is_synced:is_synced
     });
 
-
+    let metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
 
     new_short_url.save().then(data => {
         const fullUrl = req.protocol + '://' + req.get('host');
@@ -136,6 +137,7 @@ exports.create_ano_urls = async (req, res) => {
             id:data._id,
             shortenedLink: `${fullUrl}/${randomUrllink}`,
             total_clicks: data.total_clicks,
+            meta:metadata,
             createdAt: data.createdAt
         }
         return res.status(200).json({
