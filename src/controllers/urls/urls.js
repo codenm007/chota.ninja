@@ -102,7 +102,7 @@ exports.create_ano_urls = async (req, res) => {
          user_id = req.user.user_id;
          is_synced = true;
          if((new Date(will_expire_at) - new Date(will_open_at)) > 3*365*24*60*60*1000){
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: "Maximum 3 year of link storage is allowed for non registered user current tier !",
                 data: null
@@ -110,7 +110,7 @@ exports.create_ano_urls = async (req, res) => {
         }
     }else{
         if((new Date(will_expire_at) - new Date(will_open_at)) > 1*365*24*60*60*1000){
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: "Maximum 1 year of link storage is allowed for non registered user current tier !",
                 data: null
@@ -119,7 +119,7 @@ exports.create_ano_urls = async (req, res) => {
     }
 
     if (!redirects_to) {
-        res.status(400).json({
+        return res.status(400).json({
             success: false,
             message: "Please pass the redirect url !",
             data: null
