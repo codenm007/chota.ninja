@@ -96,9 +96,26 @@ exports.create_ano_urls = async (req, res) => {
     const user_id = null;
     const is_synced = false;
 
+    //The difference between opening and closing should be maximum 1 year for any user
+
     if(req.user){
          user_id = req.user.user_id;
          is_synced = true;
+         if((new Date(will_expire_at) - new Date(will_open_at)) > 3*365*24*60*60*1000){
+            res.status(400).json({
+                success: false,
+                message: "Maximum 3 year of link storage is allowed for non registered user current tier !",
+                data: null
+            })
+        }
+    }else{
+        if((new Date(will_expire_at) - new Date(will_open_at)) > 1*365*24*60*60*1000){
+            res.status(400).json({
+                success: false,
+                message: "Maximum 1 year of link storage is allowed for non registered user current tier !",
+                data: null
+            })
+        }
     }
 
     if (!redirects_to) {
