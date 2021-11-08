@@ -8,6 +8,7 @@ const compress = require('compression');
 const noCache = require('nocache');
 const session = require('express-session');
 const passport = require('passport');
+const path = require('path');
 
 app.use(helmet());
 app.use(compress()); // Compress all routes
@@ -37,8 +38,13 @@ app.use(
 
 app.use(parser.json());
 
+// all frontend routes are listed here exclusively
+app.use('/', express.static(path.join(__dirname, 'build')))
 
-  //importing routes
+app.use('/calendar', express.static(path.join(__dirname, 'build')))
+
+
+  //importing all backend routes
    const index_routes = require("./routes/index");
 
    app.use(index_routes);
