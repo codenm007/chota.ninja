@@ -138,7 +138,8 @@ exports.create_ano_urls = async (req, res) => {
             shortenedLink: `${fullUrl}/${randomUrllink}`,
             total_clicks: data.total_clicks,
             meta:metadata,
-            createdAt: data.createdAt
+            opensAt: data.will_open_at,
+            expiresAt:data.will_expire_at
         }
         return res.status(200).json({
             success: true,
