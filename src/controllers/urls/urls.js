@@ -149,7 +149,7 @@ exports.create_ano_urls = async (req, res) => {
     let metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
 
     new_short_url.save().then(data => {
-        const fullUrl = req.protocol + '://' + req.get('host');
+        const fullUrl = "https" + '://' + req.get('host');
         let response = {
             id:data._id,
             shortenedLink: `${fullUrl}/${randomUrllink}`,
