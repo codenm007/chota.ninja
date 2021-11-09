@@ -153,6 +153,7 @@ exports.create_ano_urls = async (req, res) => {
         let response = {
             id:data._id,
             shortenedLink: `${fullUrl}/${randomUrllink}`,
+            actualLink:redirects_to,
             total_clicks: data.total_clicks,
             meta:metadata,
             opensAt: data.will_open_at,
