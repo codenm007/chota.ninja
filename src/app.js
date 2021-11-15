@@ -39,7 +39,7 @@ app.use(
 app.use(parser.json());
 
 // all frontend routes are listed here exclusively
-app.use('/dssd',express.static(path.join(__dirname, 'build')));
+app.use('/',express.static(path.join(__dirname, 'build')));
 
 app.use('/calendar', express.static(path.join(__dirname, 'build')))
 

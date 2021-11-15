@@ -25,10 +25,10 @@ router.get('/auth/google',
   passport.authenticate('google', { scope : ['profile', 'email'] }));
  
 router.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/error' }),
+  passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect success.
-    res.redirect('/user/success');
+    res.redirect('/');
   });
 
 router.get('/auth/logout', function(req, res) {
@@ -39,7 +39,7 @@ router.get('/auth/logout', function(req, res) {
 });
 
 
-router.get('/personal_info',isLoggedIn, (req, res) => {
+router.get('/personal_info', (req, res) => {
   
   res.status(200)
   .json({
