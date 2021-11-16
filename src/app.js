@@ -26,9 +26,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+
+
 //cors allowed to all
 
 app.use(cors());
+
 //body parser configarations
 app.use(
   parser.urlencoded({
@@ -40,6 +43,8 @@ app.use(parser.json());
 
 // all frontend routes are listed here exclusively
 app.use('/',express.static(path.join(__dirname, 'build')));
+
+app.use('/login',express.static(path.join(__dirname, 'build')));
 
 app.use('/calendar', express.static(path.join(__dirname, 'build')))
 

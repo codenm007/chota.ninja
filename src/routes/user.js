@@ -4,9 +4,11 @@ const router = express.Router();
 const passport = require("passport");
 require('../config/passport');
 //imporing controllers
+const Usercontroller = require("../controllers/users/user");
 
 //importing important utils
 const isLoggedIn = require("../controllers/users/utils").isLoggedIn;
+const googleOauth = require("../controllers/users/utils").googleOauth;
 
 
 //anonymous user routes
@@ -15,21 +17,8 @@ router.get('/success', (req, res) => res.send("gghghghgh"));
 router.get('/error', (req, res) => res.send("error logging in"));
 
 
-//protected routes
-// router.post(
-//     "/get_user_booking_data",
-//     passport.authenticate("jwt", { session: false }),
-//     get_user_booking_data
-//   );
-router.get('/auth/google', 
-  passport.authenticate('google', { scope : ['profile', 'email'] }));
- 
-router.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect success.
-    res.redirect('/');
-  });
+router.post('/auth/google', Usercontroller.googleTokenVerify);
+
 
 router.get('/auth/logout', function(req, res) {
     req.logout();
