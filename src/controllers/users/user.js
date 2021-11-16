@@ -21,7 +21,7 @@ const ticket = await client.verifyIdToken({
   audience:process.env.GOOGLE_CLIENT_ID
 });
   const userProfiledata = ticket.getPayload();
-  console.log("login success",userProfiledata);
+  
      
      let query = {email:userProfiledata.email}
        users.findOneAndUpdate(query, { $set: { 
@@ -56,7 +56,9 @@ const ticket = await client.verifyIdToken({
               return res.status(200).json({
                 success: true,
                 message: "Login successful",
-                data: token
+                data: {
+                  token:token
+                }
               })
               
             }

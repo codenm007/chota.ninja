@@ -9,6 +9,9 @@ const urls_controller = require("../controllers/urls/urls")
 //importing important utils
 const isLoggedIn = require("../controllers/users/utils").isLoggedIn;
 
+//importing middleware
+const decodeJWT = require("../middleware/jwt_decode");
+
 //anonymous user routes
 
 router.post('/anonymous/shortner',urls_controller.create_ano_urls);
@@ -28,7 +31,7 @@ router.post('/DisableurlPassword',isLoggedIn,urls_controller.disable_passworded)
 
 router.post('/blockUrl',isLoggedIn,urls_controller.block_url);
 
-router.get('/link_analytics',isLoggedIn,urls_controller.url_analytics_data);
+router.get('/link_analytics', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.url_analytics_data);
 // router.post(
 //     "/get_user_booking_data",
 //     passport.authenticate("jwt", { session: false }),

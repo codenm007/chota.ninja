@@ -10,7 +10,6 @@ const Usercontroller = require("../controllers/users/user");
 const isLoggedIn = require("../controllers/users/utils").isLoggedIn;
 const googleOauth = require("../controllers/users/utils").googleOauth;
 
-
 //anonymous user routes
 
 router.get('/success', (req, res) => res.send("gghghghgh"));

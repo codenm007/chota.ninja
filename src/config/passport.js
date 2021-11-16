@@ -98,6 +98,7 @@ const opts = {
   const strategy = new JwtStrategy(opts, (payload, next) => {
     //getting user id from db
     //console.log(payload);
+    next(null, payload);
   });
   
   passport.use(strategy);

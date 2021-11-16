@@ -146,6 +146,8 @@ exports.create_ano_urls = async (req, res) => {
         is_synced:is_synced
     });
 
+    console.log(232323)
+
     let metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
 
     new_short_url.save().then(data => {
@@ -225,7 +227,7 @@ exports.url_namechange = async (req, res) => {
         })
     }
 
-    let newurlcode = encodeURIComponent(code) ;
+    let newurlcode = encodeURIComponent(code.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase()) ;
     
     urls.findOne({ 
         url_hash:utils.hashstr(newurlcode),
@@ -432,6 +434,7 @@ exports.block_url = async (req, res) => {
 exports.url_analytics_data = async (req, res) => {
     let { id } = req.body;
     const {user_id} = req.user;
+    console.log(23,user_id)
     if (!id) {
         return res.status(400).json({
             success: false,
