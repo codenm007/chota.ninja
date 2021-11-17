@@ -40,7 +40,7 @@ exports.shortenurl = async (req, res) => {
         const agent = useragent.parse(req.headers['user-agent']);
 
         const forwardFor= req.headers['x-forwarded-for'];
-        console.log(forwardFor,"ff")
+        console.log(typeof forwardFor,"ff")
         
         const ip = utils.encrypt(forwardFor[0] || req.socket.remoteAddress);
         // console.log(agent.toAgent(),"os",agent.os.toString());
