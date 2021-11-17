@@ -38,8 +38,11 @@ exports.shortenurl = async (req, res) => {
     }).then(urldata => {
         
         const agent = useragent.parse(req.headers['user-agent']);
+
+        const forwardFor= req.headers['x-forwarded-for'];
+        console.log(forwardFor,"ff")
         
-        const ip = utils.encrypt(req.headers['x-forwarded-for'][0] || req.socket.remoteAddress);
+        const ip = utils.encrypt(forwardFor[0] || req.socket.remoteAddress);
         // console.log(agent.toAgent(),"os",agent.os.toString());
 
          const newurl_analytics = new url_analytics({
