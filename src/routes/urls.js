@@ -23,13 +23,15 @@ router.post('/anonymous/customizeurl',urls_controller.url_namechange);
 router.post('/getredirecturl',urls_controller.shortenurl);
 //protected routes
 
-router.post('/syncUserurls',isLoggedIn,urls_controller.sync_user_urls);
+router.post('/syncUserurls', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.sync_user_urls);
 
-router.post('/urlAddPassword',isLoggedIn,urls_controller.passworded_links);
+router.get('/mylinks', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.myLinks);
 
-router.post('/DisableurlPassword',isLoggedIn,urls_controller.disable_passworded);
+router.post('/urlAddPassword', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.passworded_links);
 
-router.post('/blockUrl',isLoggedIn,urls_controller.block_url);
+router.post('/DisableurlPassword', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.disable_passworded);
+
+router.post('/blockUrl', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.block_url);
 
 router.get('/link_analytics', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.url_analytics_data);
 // router.post(

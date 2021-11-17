@@ -146,8 +146,6 @@ exports.create_ano_urls = async (req, res) => {
         is_synced:is_synced
     });
 
-    console.log(232323)
-
     let metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
 
     new_short_url.save().then(data => {
@@ -159,7 +157,10 @@ exports.create_ano_urls = async (req, res) => {
             total_clicks: data.total_clicks,
             meta:metadata,
             opensAt: data.will_open_at,
-            expiresAt:data.will_expire_at
+            expiresAt:data.will_expire_at,
+            is_blocked:data.is_blocked,
+            is_synced:data.is_synced,
+            is_passworded:data.is_passworded
         }
         return res.status(200).json({
             success: true,
@@ -300,6 +301,60 @@ exports.sync_user_urls = async (req, res) => {
                     message: "Url syned successfully !",
                     data: null
                 })
+            
+        })
+        .catch(err =>{
+            console.log(err);
+        })
+}
+
+/******************************************** */
+//This function is used to get all the links of the users
+/******************************************** */
+exports.myLinks = async (req, res) => {
+    const {user_id} = req.user;
+
+        let query = {user_id:user_id,is_synced:true}
+        urls.find(query)
+        .then(async(links)=>{
+
+            if(links.length == 0){
+                return res.status(200).json({
+                    success: true,
+                    message: "successfully fetched links",
+                    data: ""
+                })
+            }
+
+            const decryptedResponse = [];
+
+            links.forEach(async link =>{
+
+                let metadata = JSON.parse(JSON.stringify(await parser(utils.decrypt(link.redirects_to)))).meta;
+                const fullUrl = "https" + '://' + req.get('host');
+                decryptedResponse.push({
+                    id:link._id,
+                    shortenedLink:`${fullUrl}/${utils.decrypt(link.url_encrypt)}`,
+                    actualLink:utils.decrypt(link.redirects_to),
+                    total_clicks:link.total_clicks,
+                    meta: metadata,
+                    opensAt:new Date(link.will_open_at),
+                    expiresAt:new Date(link.will_expire_at),
+                    is_blocked:link.is_blocked,
+                    is_synced:link.is_synced,
+                    is_passworded:link.is_passworded
+                })
+
+                
+                if(links.length == decryptedResponse.length){
+                    return res.status(200).json({
+                        success: true,
+                        message: "successfully fetched links",
+                        data: decryptedResponse
+                    })
+                }
+            })
+
             
         })
         .catch(err =>{
