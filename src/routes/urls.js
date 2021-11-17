@@ -33,7 +33,7 @@ router.post('/DisableurlPassword', passport.authenticate("jwt", { session: false
 
 router.post('/blockUrl', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.block_url);
 
-router.get('/link_analytics', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.url_analytics_data);
+router.post('/link_analytics', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.url_analytics_data);
 // router.post(
 //     "/get_user_booking_data",
 //     passport.authenticate("jwt", { session: false }),

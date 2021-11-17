@@ -7,6 +7,7 @@ let urls = require("../../models/urls");
 let url_analytics = require("../../models/url_analytics");
 const utils = require("./utils");
 const { parser } = require('html-metadata-parser');
+const geoip = require('geoip-lite');
 
 /******************************************** */
 //This is the main url controller  which checks and matches urls
@@ -37,7 +38,8 @@ exports.shortenurl = async (req, res) => {
     }).then(urldata => {
         
         const agent = useragent.parse(req.headers['user-agent']);
-        const ip = utils.encrypt(req.headers['x-forwarded-for'] || req.socket.remoteAddress);
+        
+        const ip = utils.encrypt(req.headers['x-forwarded-for'][0] || req.socket.remoteAddress);
         // console.log(agent.toAgent(),"os",agent.os.toString());
 
          const newurl_analytics = new url_analytics({
@@ -160,7 +162,8 @@ exports.create_ano_urls = async (req, res) => {
             expiresAt:data.will_expire_at,
             is_blocked:data.is_blocked,
             is_synced:data.is_synced,
-            is_passworded:data.is_passworded
+            is_passworded:data.is_passworded,
+            createdAt:data.createdAt
         }
         return res.status(200).json({
             success: true,
@@ -342,7 +345,8 @@ exports.myLinks = async (req, res) => {
                     expiresAt:new Date(link.will_expire_at),
                     is_blocked:link.is_blocked,
                     is_synced:link.is_synced,
-                    is_passworded:link.is_passworded
+                    is_passworded:link.is_passworded,
+                    createdAt:link.createdAt
                 })
 
                 
@@ -509,15 +513,28 @@ exports.url_analytics_data = async (req, res) => {
                 return res.status(200).json({
                     success: true,
                     message: "Successfully fetched link analytics",
-                    data: {}
+                    data: []
                 })
             }
+
             analytics_data.forEach(data_url =>{
+                const ipData = geoip.lookup(utils.decrypt(data_url.user_ip));
+                let Country = "NA";
+                let City = "NA";
+                let timezone = "NA"
+                if(ipData){
+                    Country = ipData.country;
+                    City = ipData.city;
+                    timezone = ipData.timezone;
+                }
                 response.push({
                     user_ip:utils.decrypt(data_url.user_ip),
                     user_browser:data_url.user_browser,
                     user_os:data_url.user_os,
-                    createdAt:data_url.createdAt
+                    createdAt:data_url.createdAt,
+                    country:Country,
+                    city:City,
+                    timezone:timezone
                 })
                 
             })
