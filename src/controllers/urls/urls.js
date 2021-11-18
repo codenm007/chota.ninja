@@ -458,7 +458,7 @@ exports.verifyPass = async (req, res) => {
             }else{
                 return res.status(200).json({
                     success: true,
-                    message: "Wrong password",
+                    message: "Link not password protected",
                     data:{
                     redirectUrl: utils.decrypt(urldata.redirects_to)
                     }
