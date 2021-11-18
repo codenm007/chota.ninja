@@ -83,11 +83,7 @@ exports.shortenurl = async (req, res) => {
             console.log(err);
         })
     }).catch(err =>{
-        return res.status(404).json({
-            success: false,
-            message: "Invalid url",
-            data: null
-        })
+        return res.status(404).redirect("/404");
     })
 
 }

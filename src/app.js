@@ -46,7 +46,9 @@ app.use('/',express.static(path.join(__dirname, 'build')));
 
 app.use('/login',express.static(path.join(__dirname, 'build')));
 
-app.use('/calendar', express.static(path.join(__dirname, 'build')))
+app.use('/404', express.static(path.join(__dirname, 'build')));
+
+
 
 
   //importing all backend routes
