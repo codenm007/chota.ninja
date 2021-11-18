@@ -21,6 +21,8 @@ router.post('/anonymous/totalClicks',urls_controller.anototalclicks);
 router.post('/anonymous/customizeurl',urls_controller.url_namechange);
 
 router.post('/getredirecturl',urls_controller.shortenurl);
+
+router.post('/anonymous/verifyPass',urls_controller.verifyPass);
 //protected routes
 
 router.post('/syncUserurls', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.sync_user_urls);

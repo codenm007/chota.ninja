@@ -402,6 +402,77 @@ exports.passworded_links = async (req, res) => {
 }
 
 /******************************************** */
+//This function is used to get reroute of passworded links
+/******************************************** */
+
+exports.verifyPass = async (req, res) => {
+    let { code,password } = req.body;
+
+    if (!code) {
+        res.status(400).json({
+            success: false,
+            message: "Please pass the urlcode !",
+            data: null
+        })
+    }
+    if (!password) {
+        res.status(400).json({
+            success: false,
+            message: "Please pass the password !",
+            data: null
+        })
+    }
+
+    //calling hash function to match db hash
+    code = utils.hashstr(code);
+    urls.findOne({ 
+        url_hash: code,
+        is_blocked:false,
+        will_open_at:{
+            $lte: new Date(), //checking link expiring time 
+        },
+        will_expire_at:{
+            $gte:new Date()
+        }
+    }).then(urldata => {
+       // console.log(urldata,2323);
+
+            if(urldata.is_passworded){
+                let user_req_pass = utils.hashstr(password);
+                let link_pass = urldata.password_digest;
+                if(user_req_pass == link_pass){ //password matched
+                    return res.status(200).json({
+                        success: true,
+                        message: "Please hold on , taking you to your site !",
+                        data:{
+                        redirectUrl: utils.decrypt(urldata.redirects_to)
+                        }
+                    });
+                }else{
+                    return res.status(401).json({
+                        success: false,
+                        message: "Wrong password",
+                        data: null
+                    })
+                }
+            }else{
+                return res.status(200).json({
+                    success: true,
+                    message: "Wrong password",
+                    data:{
+                    redirectUrl: utils.decrypt(urldata.redirects_to)
+                    }
+                });
+            }
+
+    }).catch(err =>{
+        
+        return res.status(404).redirect("/404");
+    })
+
+}
+
+/******************************************** */
 //This function is used to diable the passworded for urls
 /******************************************** */
 
@@ -455,20 +526,22 @@ exports.block_url = async (req, res) => {
 
 
 
-        let query = {_id:url_id,is_synced:true,user_id:user_id,is_passworded:true}
+        let query = {_id:url_id,is_synced:true,user_id:user_id}
         urls.findOne(query).then((data)=>{
             let linkblocked = !data.is_blocked;
             
                 urls.findOneAndUpdate(query, { $set: {is_blocked:linkblocked,updatedAt:new Date() }})
                 .then(()=>{
                     let message = "Link blocked successfully !"
-                    if(!is_blocked){
+                    if(!linkblocked){
                         message = "Link unblocked successfully !"
                     }
                         return res.status(200).json({
                             success: true,
                             message: message,
-                            data: null
+                            data: {
+                                linkBlockStatus:linkblocked
+                            }
                         })
                     
                 })
