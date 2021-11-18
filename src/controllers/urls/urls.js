@@ -23,7 +23,7 @@ exports.shortenurl = async (req, res) => {
             data: null
         })
     }
-
+    let shortenedLink = code;
     //calling hash function to match db hash
     code = utils.hashstr(code);
     urls.findOne({ 
@@ -40,9 +40,12 @@ exports.shortenurl = async (req, res) => {
         const agent = useragent.parse(req.headers['user-agent']);
 
         let forwardFor= req.headers['x-forwarded-for'];
-        forwardFor = forwardFor.split(",");
+        if(forwardFor){
+            forwardFor = forwardFor.split(",");
+            forwardFor = forwardFor[0];
+        }
         
-        const ip = utils.encrypt(forwardFor[0] || req.socket.remoteAddress);
+        const ip = utils.encrypt(forwardFor || req.socket.remoteAddress);
         // console.log(agent.toAgent(),"os",agent.os.toString());
 
          const newurl_analytics = new url_analytics({
@@ -65,17 +68,8 @@ exports.shortenurl = async (req, res) => {
         .then(() =>{
 
             if(urldata.is_passworded){
-                let user_req_pass = utils.hashstr(password);
-                let link_pass = urldata.password_digest;
-                if(user_req_pass == link_pass){ //password matched
-                    return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
-                }else{
-                    return res.status(401).json({
-                        success: false,
-                        message: "Wrong password",
-                        data: null
-                    })
-                }
+                return res.status(200).redirect(`/secure/${shortenedLink}`);
+                
             }else{
                 return res.status(200).redirect(utils.decrypt(urldata.redirects_to));
             }
@@ -83,6 +77,7 @@ exports.shortenurl = async (req, res) => {
             console.log(err);
         })
     }).catch(err =>{
+        console.log(err);
         return res.status(404).redirect("/404");
     })
 

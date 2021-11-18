@@ -48,6 +48,8 @@ app.use('/login',express.static(path.join(__dirname, 'build')));
 
 app.use('/404', express.static(path.join(__dirname, 'build')));
 
+app.use('/secure/:code', express.static(path.join(__dirname, 'build')));
+
 
 
 
