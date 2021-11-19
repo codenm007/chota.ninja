@@ -246,7 +246,7 @@ exports.url_namechange = async (req, res) => {
         }else{
             let query = {_id:id}
             
-            const fullUrl = req.protocol + '://' + req.get('host');
+            const fullUrl = "https" + '://' + req.get('host');
             urls.findOneAndUpdate(query, { $set: { url_hash: utils.hashstr(newurlcode),url_encrypt:utils.encrypt(newurlcode) }}) //incrementing total clicks
             .then((data) =>{
                 return res.status(200).json({
