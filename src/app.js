@@ -14,8 +14,12 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "script-src": ["'self'", "'unsafe-inline'", "chota.ninja","https://*.google.com"],
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "chota.ninja","https://*.google.com"],
+        styleSrc:["'self'"],
+        imgSrc:["*", 'data:'],
+        connectSrc: ["'self'"],
+        frameSrc: ["'self'", "'unsafe-inline'", "chota.ninja","https://accounts.google.com"],
       },
     },
   })
