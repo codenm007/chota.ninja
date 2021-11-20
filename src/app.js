@@ -10,7 +10,11 @@ const session = require('express-session');
 const passport = require('passport');
 const path = require('path');
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(compress()); // Compress all routes
 app.use(helmet.xssFilter());
 app.use(noCache());
