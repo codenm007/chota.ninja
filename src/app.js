@@ -12,9 +12,15 @@ const path = require('path');
 
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "script-src": ["'self'", "'unsafe-inline'", "chota.ninja","https://*.google.com"],
+      },
+    },
   })
 );
+
 app.use(compress()); // Compress all routes
 app.use(helmet.xssFilter());
 app.use(noCache());
