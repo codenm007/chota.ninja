@@ -16,7 +16,7 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "chota.ninja","https://*.google.com"],
-        styleSrc:["'self'"],
+        styleSrc:["'self'", "'unsafe-inline'", "chota.ninja"],
         imgSrc:["*", 'data:'],
         connectSrc: ["'self'"],
         frameSrc: ["'self'", "'unsafe-inline'", "chota.ninja","https://accounts.google.com"],
