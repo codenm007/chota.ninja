@@ -143,6 +143,14 @@ exports.create_ano_urls = async (req, res) => {
     });
 
     let metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
+    let MetaTitle = metadata.title;
+    let MetaDesc = metadata.description;
+    if(!MetaTitle){
+        MetaTitle = "NA"
+    }
+    if(!MetaDesc){
+        MetaDesc = "NA"
+    }
 
     new_short_url.save().then(data => {
         const fullUrl = "https" + '://' + req.get('host');
@@ -151,7 +159,10 @@ exports.create_ano_urls = async (req, res) => {
             shortenedLink: `${fullUrl}/${randomUrllink}`,
             actualLink:redirects_to,
             total_clicks: data.total_clicks,
-            meta:metadata,
+            meta:{
+                title:MetaTitle,
+                description:MetaDesc
+            },
             opensAt: data.will_open_at,
             expiresAt:data.will_expire_at,
             is_blocked:data.is_blocked,
@@ -328,13 +339,25 @@ exports.myLinks = async (req, res) => {
             links.forEach(async link =>{
 
                 let metadata = JSON.parse(JSON.stringify(await parser(utils.decrypt(link.redirects_to)))).meta;
+                let MetaTitle = metadata.title;
+                let MetaDesc = metadata.description;
+                if(!MetaTitle){
+                    MetaTitle = "NA"
+                }
+                if(!MetaDesc){
+                    MetaDesc = "NA"
+                }
+            
                 const fullUrl = "https" + '://' + req.get('host');
                 decryptedResponse.push({
                     id:link._id,
                     shortenedLink:`${fullUrl}/${utils.decrypt(link.url_encrypt)}`,
                     actualLink:utils.decrypt(link.redirects_to),
                     total_clicks:link.total_clicks,
-                    meta: metadata,
+                    meta:{
+                        title:MetaTitle,
+                        description:MetaDesc
+                    },
                     opensAt:new Date(link.will_open_at),
                     expiresAt:new Date(link.will_expire_at),
                     is_blocked:link.is_blocked,
