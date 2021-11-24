@@ -141,10 +141,17 @@ exports.create_ano_urls = async (req, res) => {
         user_id:user_id,
         is_synced:is_synced
     });
-
-    let metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
+    let metadata;
+    try{
+         metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
+    }catch(err){
+       
+        metadata = false;
+    }
+    
     let MetaTitle = metadata.title;
     let MetaDesc = metadata.description;
+    
     if(!MetaTitle){
         MetaTitle = "NA"
     }
@@ -338,7 +345,14 @@ exports.myLinks = async (req, res) => {
 
             links.forEach(async link =>{
 
-                let metadata = JSON.parse(JSON.stringify(await parser(utils.decrypt(link.redirects_to)))).meta;
+                let metadata;
+                try{
+                     metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
+                }catch(err){
+                   
+                    metadata = false;
+                }
+                
                 let MetaTitle = metadata.title;
                 let MetaDesc = metadata.description;
                 if(!MetaTitle){
