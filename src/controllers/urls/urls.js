@@ -541,7 +541,7 @@ exports.disable_passworded = async (req, res) => {
 }
 
 /******************************************** */
-//This function is used to block the  urls
+//This function is used to delete the  urls
 /******************************************** */
 
 exports.block_url = async (req, res) => {
@@ -580,6 +580,63 @@ exports.block_url = async (req, res) => {
                 .catch(err =>{
                     console.log(err);
                 })
+        }).catch(err =>{
+            return res.status(403).json({
+                success: false,
+                message: "Action not allowed",
+                data: null
+            })
+        })
+
+}
+
+/******************************************** */
+//This function is used to block the  urls
+/******************************************** */
+
+exports.delete_url = async (req, res) => {
+    const { url_id } = req.body;
+    const {user_id} = req.user;
+
+    if (!url_id) {
+        return res.status(400).json({
+            success: false,
+            message: "Please pass the url id !",
+            data: null
+        })
+    }
+
+
+
+        let query = {_id:url_id,is_synced:true,user_id:user_id}
+        urls.findOne(query).then((data)=>{
+            
+                if(data){
+                    urls.findOneAndDelete(query)
+                    .then(()=>{
+
+                            return res.status(200).json({
+                                success: true,
+                                message: "Link deleted successfully !",
+                                data: null
+                            })
+                        
+                    })
+                    .catch(err =>{
+                        return res.status(500).json({
+                            success: false,
+                            message: "Something gone wrong !",
+                            data: null
+                        })
+                    })
+
+                }else{
+                    return res.status(200).json({
+                        success: true,
+                        message: "Link already deleted !",
+                        data: null
+                    })
+                }
         }).catch(err =>{
             return res.status(403).json({
                 success: false,
