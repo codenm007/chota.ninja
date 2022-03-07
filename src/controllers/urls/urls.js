@@ -347,6 +347,7 @@ exports.myLinks = async (req, res) => {
 
                 let metadata;
                 try{
+                     const redirects_to = await utils.decrypt(link.redirects_to);
                      metadata = JSON.parse(JSON.stringify(await parser(redirects_to))).meta
                 }catch(err){
                    
