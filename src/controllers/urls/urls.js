@@ -631,9 +631,9 @@ exports.delete_url = async (req, res) => {
                     })
 
                 }else{
-                    return res.status(200).json({
-                        success: true,
-                        message: "Link already deleted !",
+                    return res.status(403).json({
+                        success: false,
+                        message: "Action not allowed",
                         data: null
                     })
                 }
