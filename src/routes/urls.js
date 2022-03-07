@@ -29,7 +29,7 @@ router.post('/syncUserurls', passport.authenticate("jwt", { session: false }),de
 
 router.get('/mylinks', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.myLinks);
 
-router.post('/deleteUrl', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.delete_url);
+router.delete('/deleteUrl', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.delete_url);
 
 router.post('/urlAddPassword', passport.authenticate("jwt", { session: false }),decodeJWT,urls_controller.passworded_links);
 
